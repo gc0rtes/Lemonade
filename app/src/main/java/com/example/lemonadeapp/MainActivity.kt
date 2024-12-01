@@ -59,11 +59,11 @@ fun LemonadeJuicySteps(
 
     var imageDescription = stringResource(R.string.lemon_tree)
 
-    var timesToSqueeze by remember { mutableStateOf((2..4).random()) }
+    val timesToSqueeze by remember { mutableStateOf((2..4).random()) }
 
     var count by remember {mutableStateOf(0)}
 
-    if (count > 3 + timesToSqueeze) {
+    if (count > (3 + timesToSqueeze)) {
         count = 0
     }
 
@@ -72,7 +72,7 @@ fun LemonadeJuicySteps(
         0 -> image = painterResource(R.drawable.lemon_tree)
         1 -> image = painterResource(R.drawable.lemon_squeeze)
         2 -> image = painterResource(R.drawable.lemon_drink)
-        3 -> image = painterResource(R.drawable.lemon_restart)
+        else -> image = painterResource(R.drawable.lemon_restart)
     }
 
     //show image description
@@ -80,7 +80,7 @@ fun LemonadeJuicySteps(
         0 -> imageDescription = stringResource(R.string.lemon_tree)
         1 -> imageDescription = stringResource(R.string.lemon_squeeze)
         2 -> imageDescription = stringResource(R.string.lemon_drink)
-        3 -> imageDescription = stringResource(R.string.lemon_restart)
+        else -> imageDescription = stringResource(R.string.lemon_restart)
     }
 
     //show instructions description
@@ -88,7 +88,7 @@ fun LemonadeJuicySteps(
         0 -> description = stringResource(R.string.tap_the_lemon_tree_to_select_a_lemon)
         1 -> description = stringResource(R.string.keep_tapping_the_lemon_to_squeeze_it)
         2 -> description = stringResource(R.string.tap_the_lemonade_to_drink_it)
-        3 -> description = stringResource(R.string.tap_the_empty_glass_to_start_again)
+        else -> description = stringResource(R.string.tap_the_empty_glass_to_start_again)
     }
 
     Column(
@@ -113,7 +113,10 @@ fun LemonadeJuicySteps(
             fontSize = 20.sp
         )
         Text (
-            text = "Times to Squeeze: ${timesToSqueeze}"
+            text = "Clicked $count times"
+        )
+        Text (
+            text = "Times to Squeeze: $timesToSqueeze"
         )
     }
 }
