@@ -9,11 +9,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,6 +21,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -53,53 +52,59 @@ fun LemonadeJuicySteps(
         .fillMaxSize()
         .wrapContentSize(Alignment.Center)
 ) {
-    var image = painterResource(R.drawable.lemon_tree)
+    var image : Painter? = painterResource(R.drawable.lemon_tree)
 
-    var description = stringResource(R.string.tap_the_lemon_tree_to_select_a_lemon)
+    var description : String? = null
 
-    var imageDescription = stringResource(R.string.lemon_tree)
+    var imageDescription : String? = null
 
-    val timesToSqueeze by remember { mutableStateOf((2..4).random()) }
+    var timesToSqueeze by remember { mutableStateOf((2..4).random()) }
 
-    var count by remember {mutableStateOf(0)}
+    var timesClicked by remember {mutableStateOf(0)}
 
-    if (count > (3 + timesToSqueeze)) {
-        count = 0
+        //restarts the flow
+    if (timesClicked >= (3 + timesToSqueeze)) {
+        timesClicked = 0
+        timesToSqueeze = (2..4).random()
+    }
+//handles the timesClicked
+    image = when{
+        timesClicked == 0 -> painterResource(R.drawable.lemon_tree)
+        timesClicked >= 1 && timesClicked < (1 + timesToSqueeze) -> painterResource(R.drawable.lemon_squeeze)
+        timesClicked == (1 + timesToSqueeze) -> painterResource(R.drawable.lemon_drink)
+        timesClicked == (2+ timesToSqueeze) -> painterResource(R.drawable.lemon_restart)
+        else -> painterResource(R.drawable.lemon_restart)
+
     }
 
-    //show images
-    when(count) {
-        0 -> image = painterResource(R.drawable.lemon_tree)
-        1 -> image = painterResource(R.drawable.lemon_squeeze)
-        2 -> image = painterResource(R.drawable.lemon_drink)
-        else -> image = painterResource(R.drawable.lemon_restart)
-    }
 
     //show image description
-    when(count){
-        0 -> imageDescription = stringResource(R.string.lemon_tree)
-        1 -> imageDescription = stringResource(R.string.lemon_squeeze)
-        2 -> imageDescription = stringResource(R.string.lemon_drink)
-        else -> imageDescription = stringResource(R.string.lemon_restart)
+    imageDescription = when {
+        timesClicked == 0 -> stringResource(R.string.lemon_tree)
+        timesClicked >= 1 && timesClicked < (1 + timesToSqueeze) -> stringResource(R.string.lemon_squeeze)
+        timesClicked == (1 + timesToSqueeze) -> stringResource(R.string.lemon_drink)
+        timesClicked == (2+ timesToSqueeze) ->  stringResource(R.string.lemon_restart)
+        else -> stringResource(R.string.lemon_restart)
     }
 
     //show instructions description
-    when(count) {
-        0 -> description = stringResource(R.string.tap_the_lemon_tree_to_select_a_lemon)
-        1 -> description = stringResource(R.string.keep_tapping_the_lemon_to_squeeze_it)
-        2 -> description = stringResource(R.string.tap_the_lemonade_to_drink_it)
-        else -> description = stringResource(R.string.tap_the_empty_glass_to_start_again)
+    description = when {
+        timesClicked == 0 -> stringResource(R.string.tap_the_lemon_tree_to_select_a_lemon)
+        timesClicked >= 1 && timesClicked < (1 + timesToSqueeze) -> stringResource(R.string.keep_tapping_the_lemon_to_squeeze_it)
+        timesClicked == (1 + timesToSqueeze) -> stringResource(R.string.tap_the_lemonade_to_drink_it)
+        timesClicked == (2+ timesToSqueeze) -> stringResource(R.string.tap_the_empty_glass_to_start_again)
+        else -> stringResource(R.string.tap_the_empty_glass_to_start_again)
     }
 
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Button(onClick = { count++ }) {
+        Button(onClick = { timesClicked++ }) {
             Image(
                 painter = image,
-                contentDescription = imageDescription,
-                )
+                contentDescription = imageDescription
+            )
 
         }
 
@@ -113,7 +118,7 @@ fun LemonadeJuicySteps(
             fontSize = 20.sp
         )
         Text (
-            text = "Clicked $count times"
+            text = "Clicked $timesClicked times"
         )
         Text (
             text = "Times to Squeeze: $timesToSqueeze"
